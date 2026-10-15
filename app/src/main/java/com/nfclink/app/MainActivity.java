@@ -13,7 +13,7 @@ import org.json.JSONObject;
 
 public class MainActivity extends Activity {
     // GANTI dengan alamat halaman profil yang sudah online (HTTPS). Isi tag NFC akan membuka alamat ini.
-    static final String BASE_URL = "https://claude.ai/artifact/DX8e331ZpViPEgrL8dx7PR";
+    static final String BASE_URL = "https://alternative-advances-protecting-continuous.trycloudflare.com";
 
     WebView web;
     NfcAdapter nfc;
