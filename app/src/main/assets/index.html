@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NFC Link</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f6;--card:#fff;--ink:#1b2433;--mute:#5d6b82;--line:#d9dfea;--acc:#2f5bff;--accink:#fff;--ok:#16a34a;--off:#9aa5b8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a26;--card:#1d2535;--ink:#eef1f8;--mute:#9aa8c2;--line:#2c374d;--acc:#7b97ff;--accink:#10172a;--off:#5d6b82}}
+:root[data-theme="dark"]{--bg:#141a26;--card:#1d2535;--ink:#eef1f8;--mute:#9aa8c2;--line:#2c374d;--acc:#7b97ff;--accink:#10172a;--off:#5d6b82}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 "Bricolage Grotesque",system-ui,sans-serif;min-height:100vh}
+main{max-width:480px;margin:0 auto;padding:20px 16px 40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px}
+h1{font-size:28px;font-weight:800;margin:0 0 2px;letter-spacing:-.02em}
+h2{font-size:15px;font-weight:600;margin:0 0 10px;color:var(--mute)}
+.sub{color:var(--mute);margin:0 0 16px;font-size:14px}
+.prof{display:flex;gap:14px;align-items:center}
+.ava{width:84px;height:84px;border-radius:50%;border:3px solid var(--acc);background:var(--bg) center/cover;cursor:pointer;flex:none;position:relative;padding:0;overflow:hidden;color:var(--mute);font-size:30px}
+.ava span{position:absolute;inset:auto 0 0 0;background:rgba(0,0,0,.55);color:#fff;font-size:11px;padding:2px 0}
+input[type=text],input[type=tel],textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+input:focus-visible,button:focus-visible,.ava:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.fields{flex:1;display:grid;gap:8px;min-width:0}
+.nfc{display:flex;align-items:center;gap:14px}
+.ind{width:46px;height:46px;border-radius:50%;flex:none;display:grid;place-items:center;background:var(--off);color:#fff;transition:background .25s,box-shadow .25s}
+.ind.on{background:var(--ic,var(--ok));box-shadow:0 0 0 6px color-mix(in srgb,var(--ic,var(--ok)) 25%,transparent);animation:pulse 1.8s ease-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 12px transparent}}
+@media (prefers-reduced-motion:reduce){.ind.on{animation:none}}
+.nfc b{display:block;font-size:18px}.nfc small{color:var(--mute)}
+.sw{position:relative;width:52px;height:30px;flex:none;margin-left:auto}
+.sw input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer;z-index:2;width:100%;height:100%}
+.sw i{position:absolute;inset:0;background:var(--off);border-radius:99px;transition:background .2s}
+.sw i::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .2s}
+.sw input:checked+i{background:var(--acc)}.sw input:checked+i::after{transform:translateX(22px)}
+.sw input:focus-visible+i{outline:3px solid var(--acc);outline-offset:2px}
+.sw.sm{width:44px;height:26px}.sw.sm i::after{width:20px;height:20px}.sw.sm input:checked+i::after{transform:translateX(18px)}
+.colors{display:flex;gap:8px;align-items:center;margin-top:12px;font-size:14px;color:var(--mute)}
+.colors button{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0}
+.colors button[aria-pressed=true]{border-color:var(--ink)}
+.row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;flex:none}
+.row .in{flex:1;min-width:0}.row .in label{font-size:13px;font-weight:600;display:block}
+.row .in input{padding:7px 10px;font-size:14px;margin-top:2px}
+.row.dim .in,.row.dim .ic{opacity:.45}
+.btn{font:600 16px "Bricolage Grotesque",system-ui,sans-serif;border:0;border-radius:14px;padding:13px 16px;cursor:pointer;background:var(--acc);color:var(--accink);width:100%}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);margin-top:8px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+#msg{min-height:22px;margin:10px 0 0;font-size:14px;color:var(--mute)}
+.tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px}
+.tabs button{flex:1;border:0;background:none;color:var(--mute);font:600 15px inherit;padding:9px;border-radius:10px;cursor:pointer;font-family:inherit}
+.tabs button[aria-selected=true]{background:var(--acc);color:var(--accink)}
+.vis{text-align:center}.vis .ava{margin:0 auto 10px;width:104px;height:104px;cursor:default}
+.vis a,.vis .lnk{display:flex;align-items:center;gap:12px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px;color:var(--ink);text-decoration:none;font-weight:600;text-align:left;width:100%;font-family:inherit;font-size:16px;cursor:pointer}
+.vis small{display:block;color:var(--mute);font-weight:400}
+.pw{text-align:center;color:var(--mute);font-size:13px;margin:18px 0 0}.pw a{color:var(--acc);font-weight:600;text-decoration:none}.pw a:hover,.pw a:focus-visible{text-decoration:underline}
+</style>
+</head>
+<body>
+<main><div id="app"></div><p class="pw">powered by <a href="https://www.tiktok.com/@co2tyo" target="_blank" rel="noopener">cocotyo</a></p></main>
+<script>
+const P=[
+{k:'wa',n:'WhatsApp',c:'#25D366',s:'WA',ph:'Nomor, mis. 08123456789',url:v=>'https://wa.me/'+v.replace(/\D/g,'').replace(/^0/,'62')},
+{k:'ig',n:'Instagram',c:'#E1306C',s:'IG',ph:'username',url:v=>'https://instagram.com/'+v.replace(/^@/,'')},
+{k:'tt',n:'TikTok',c:'#111827',s:'TT',ph:'username',url:v=>'https://tiktok.com/@'+v.replace(/^@/,'')},
+{k:'dn',n:'DANA',c:'#118EEA',s:'DA',ph:'Nomor DANA',copy:1},
+{k:'fb',n:'Facebook',c:'#1877F2',s:'FB',ph:'username / nama profil',url:v=>'https://facebook.com/'+v},
+{k:'tg',n:'Telegram',c:'#27A7E7',s:'TG',ph:'username',url:v=>'https://t.me/'+v.replace(/^@/,'')},
+{k:'yt',n:'YouTube',c:'#FF0000',s:'YT',ph:'@channel',url:v=>'https://youtube.com/@'+v.replace(/^@/,'')},
+{k:'web',n:'Website',c:'#6B7280',s:'WW',ph:'https://...',url:v=>/^https?:/.test(v)?v:'https://'+v}
+];
+const COL={Hijau:'#16a34a',Biru:'#2f5bff',Oranye:'#f97316'};
+let S={name:'',bio:'',photo:'',nfc:false,ic:'Hijau',links:{},tab:'edit'};
+try{const x=JSON.parse(localStorage.getItem('nfclink')||'null');if(x)S={...S,...x}}catch(e){}
+const save=()=>{try{localStorage.setItem('nfclink',JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const L=k=>S.links[k]||(S.links[k]={on:false,v:''});
+const native=!!window.Android;const supported=native||'NDEFReader' in window;
+const b64=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const unb=s=>JSON.parse(decodeURIComponent(escape(atob(s.replace(/-/g,'+').replace(/_/g,'/')))));
+function payload(){const l={};P.forEach(p=>{const x=L(p.k);if(x.on&&x.v.trim())l[p.k]=x.v.trim()});return{n:S.name,b:S.bio,l}}
+function shareUrl(){return (native?Android.baseUrl():location.href.split('#')[0])+'#p='+b64(payload())}
+function ava(cls){return `<button class="ava" id="${cls}" aria-label="Ganti foto profil" style="${S.photo?`background-image:url(${S.photo})`:''}">${S.photo?'':'+'}<span>Ubah</span></button>`}
+function visitor(d){
+ const items=P.filter(p=>d.l&&d.l[p.k]).map(p=>{const v=d.l[p.k];
+  const ic=`<span class="ic" style="background:${p.c}">${p.s}</span>`;
+  return p.copy?`<button class="lnk" data-copy="${esc(v)}">${ic}<span>${p.n}<small>${esc(v)} · ketuk untuk salin</small></span></button>`
+  :`<a href="${esc(p.url(v))}" target="_blank" rel="noopener">${ic}<span>${p.n}<small>${esc(v)}</small></span></a>`}).join('');
+ return `<div class="vis"><div class="ava" style="${S.photo&&S.tab==='preview'?`background-image:url(${S.photo})`:''}">${(S.photo&&S.tab==='preview')?'':'👤'}</div><h1>${esc(d.n||'Tanpa nama')}</h1><p class="sub">${esc(d.b||'')}</p>${items||'<p class="sub">Belum ada tautan yang aktif.</p>'}</div>`}
+function render(){
+ const h=location.hash.match(/^#p=(.+)/);
+ if(h){try{$('app').innerHTML=`<div class="card">${visitor(unb(h[1]))}</div>`;bind();return}catch(e){}}
+ const col=COL[S.ic];
+ let t=`<h1>NFC Link</h1><p class="sub">Satu tempelan, semua profil sosialmu terbuka.</p>
+ <div class="tabs" role="tablist"><button role="tab" aria-selected="${S.tab==='edit'}" data-tab="edit">Atur</button><button role="tab" aria-selected="${S.tab==='preview'}" data-tab="preview">Pratinjau</button></div>`;
+ if(S.tab==='preview'){t+=`<div class="card">${visitor(payload())}</div><p class="sub">Beginilah tampilan yang dilihat orang setelah scan. Foto tidak ikut tertulis di tag karena ukuran memori NFC kecil.</p>`}
+ else{
+ t+=`<div class="card prof">${ava('ava')}<div class="fields"><input type="text" id="name" placeholder="Nama kamu" value="${esc(S.name)}" aria-label="Nama"><input type="text" id="bio" placeholder="Bio singkat" value="${esc(S.bio)}" aria-label="Bio"></div></div>
+ <input type="file" id="file" accept="image/*" hidden>
+ <div class="card"><div class="nfc"><div class="ind ${S.nfc?'on':''}" style="--ic:${col}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8.5a6.5 6.5 0 0 1 0 7M10 6a10 10 0 0 1 0 12M14 3.5a13.5 13.5 0 0 1 0 17"/></svg></div>
+ <div><b>NFC ${S.nfc?'ON':'OFF'}</b><small>${S.nfc?'Siap dibagikan':'Berbagi dimatikan'}</small></div>
+ <label class="sw"><input type="checkbox" id="nfc" ${S.nfc?'checked':''} aria-label="NFC aktif"><i></i></label></div>
+ <div class="colors">Warna indikator ${Object.entries(COL).map(([n,c])=>`<button data-col="${n}" style="background:${c}" aria-pressed="${S.ic===n}" aria-label="${n}"></button>`).join('')}</div>
+ <p class="sub" style="margin:10px 0 0">${supported?'Perangkat ini mendukung tulis NFC.':'Browser ini belum mendukung tulis NFC. Buka di Chrome Android.'}</p></div>
+ <div class="card"><h2>Tautan yang dibagikan</h2>${P.map(p=>{const x=L(p.k);return `<div class="row ${x.on?'':'dim'}"><span class="ic" style="background:${p.c}">${p.s}</span><div class="in"><label for="i-${p.k}">${p.n}</label><input type="text" id="i-${p.k}" data-k="${p.k}" placeholder="${p.ph}" value="${esc(x.v)}"></div><label class="sw sm"><input type="checkbox" data-sw="${p.k}" ${x.on?'checked':''} aria-label="${p.n} aktif"><i></i></label></div>`}).join('')}</div>
+ <button class="btn" id="write" ${S.nfc?'':'disabled'}>Tulis ke tag NFC</button>
+ <button class="btn ghost" id="copy">Salin tautan</button><p id="msg" role="status"></p>`}
+ $('app').innerHTML=t;bind();
+}
+function bind(){
+ document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{S.tab=b.dataset.tab;save();render()});
+ document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>{if(window.Android)Android.copy(b.dataset.copy);else navigator.clipboard&&navigator.clipboard.writeText(b.dataset.copy);b.querySelector('small').textContent='Tersalin ✓'});
+ const a=$('ava');if(a){a.onclick=()=>$('file').click();
+  $('file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d'),m=Math.min(im.width,im.height);x.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,256,256);S.photo=c.toDataURL('image/jpeg',.85);save();render()};im.src=r.result};r.readAsDataURL(f)};
+  $('name').oninput=e=>{S.name=e.target.value;save()};$('bio').oninput=e=>{S.bio=e.target.value;save()};
+  $('nfc').onchange=e=>{S.nfc=e.target.checked;save();render()};
+  document.querySelectorAll('[data-col]').forEach(b=>b.onclick=()=>{S.ic=b.dataset.col;save();render()});
+  document.querySelectorAll('[data-k]').forEach(i=>i.oninput=e=>{L(i.dataset.k).v=e.target.value;save()});
+  document.querySelectorAll('[data-sw]').forEach(i=>i.onchange=e=>{L(i.dataset.sw).on=e.target.checked;save();render()});
+  $('copy').onclick=async()=>{try{if(native)Android.copy(shareUrl());else await navigator.clipboard.writeText(shareUrl());msg('Tautan tersalin.')}catch(e){msg('Gagal menyalin.')}};
+  $('write').onclick=async()=>{
+   if(!supported)return msg('Web NFC hanya ada di Chrome Android.');
+   if(native){if(!Object.keys(payload().l).length)return msg('Aktifkan dan isi minimal satu tautan.');window.onNfcResult=(ok,m)=>msg(m);msg('Tempelkan tag NFC ke belakang HP…');return Android.writeNfc(shareUrl())}
+   if(!Object.keys(payload().l).length)return msg('Aktifkan dan isi minimal satu tautan.');
+   try{msg('Tempelkan tag NFC ke belakang HP…');await new NDEFReader().write({records:[{recordType:'url',data:shareUrl()}]});msg('Berhasil ditulis ✓ Sekarang tag bisa di-scan.')}
+   catch(e){msg('Gagal menulis: '+(e.message||e.name)+'. Pastikan NFC HP menyala.')}};
+ }
+}
+function msg(t){const m=$('msg');if(m)m.textContent=t}
+window.onhashchange=render;render();
+</script>
+</body>
+</html>
