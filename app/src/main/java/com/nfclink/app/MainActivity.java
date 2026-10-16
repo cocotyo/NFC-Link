@@ -13,7 +13,7 @@ import org.json.JSONObject;
 
 public class MainActivity extends Activity {
     // GANTI dengan alamat halaman profil yang sudah online (HTTPS). Isi tag NFC akan membuka alamat ini.
-    static final String BASE_URL = "https://nfc-link-alpha.vercel.app";
+    static final String BASE_URL = "https://nfclinkid-aomkzurvq-tyo11.vercel.app/";
 
     WebView web;
     NfcAdapter nfc;
